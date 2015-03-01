@@ -19,7 +19,7 @@ public class Game {
 		return gameState;
 	}
 	
-	protected static player getturn(){
+	protected static player getTurn(){
 		return turn;
 	}
 	
@@ -45,8 +45,8 @@ public class Game {
 			System.out.println();
 			Board.printBoard();
 			System.out.println();
-			System.out.println("It is " + turn +"s turn, with a dice roll of: " + stringDicePair(dicePair));
-			
+			System.out.println("The dice roll is: " + stringDicePair());
+			System.out.print(turn + " make your move: ");
 			//break;
 			
 			gameState = Move.nextMove();
@@ -88,13 +88,13 @@ public class Game {
 		
 	}
 
-	protected static int[] diceRoll(){
+	private static int[] diceRoll(){
 		int dice1 = (int)(Math.random()*6 +1);
 		int dice2 = (int)(Math.random()*6 +1);
 		return new int[] {dice1,dice2};
 	}
 
-	protected static void updateGameOver(){
+	private static void updateGameOver(){
 		if (countWhitePieces() == 0){
 			gameOver = true;
 			winner = player.WHITE;
@@ -104,29 +104,30 @@ public class Game {
 		}
 	}
 	
-	protected static int countWhitePieces(){ // including captured pieces
+	private static int countWhitePieces(){ // including captured pieces
 		int count = 0;
 		for (int spike = 1; spike <= 24; spike++){
 			if (gameState[spike] > 0){
 				count = count + Math.abs(gameState[spike]);
 			}
 		}
-		count = count + gameState[25];
+		count = count + Math.abs(gameState[25]);
 		return count;
 	}
 	
-	protected static int countRedPieces(){ // including captured pieces
+	private static int countRedPieces(){ // including captured pieces
 		int count = 0;
 		for (int spike = 1; spike <= 24; spike++){
 			if (gameState[spike] < 0){
 				count = count + Math.abs(gameState[spike]);
 			}
 		}
-		count = count + gameState[0];
+		count = count + Math.abs(gameState[0]);
 		return count;
 	}
 
-	protected static String stringDicePair(int[] dicePair){
+	protected static String stringDicePair(){
+		
 		return Integer.toString(dicePair[0]) + "-" + Integer.toString(dicePair[1]);
 	}
 }

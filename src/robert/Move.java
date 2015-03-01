@@ -14,25 +14,28 @@ public class Move {
 	
 	protected static int[] nextMove() {
 
+		List<int[]> moves;
 		do {
-			List<int[]> moves = receiveMoves();
+			moves = Input.receiveMoves();
 		} while (!checkValid(moves));
 
 		makeMoves(moves);
 		return gameState;
 	}
 
-	private static makeMoves(List<int[]> moves) {
+	private static void makeMoves(List<int[]> moves) {
 		for (int[] move : moves) {
 			makeMove(move);
 		}
 	}
 
-	private static makeMove(int[] move) {
+	private static void makeMove(int[] move) {
 		// (StartPosition | EndPosition)
+				
 		switch(moveType(move)) {
 		case NORMAL: normalMove(move);
 		case BEAR_OFF: bearOffMove(move);
+		case CAPTURE: captureMove(move);
 		}
 
 	}
@@ -44,7 +47,7 @@ public class Move {
 	}
 	
 	private static void normalMove(int[] move) {
-		switch (Game.getturn()) {
+		switch (Game.getTurn()) {
 		case WHITE: 
 			gameState[move[0]] = gameState[move[0]] --;
 			gameState[move[1]] = gameState[move[1]] ++;
@@ -52,4 +55,34 @@ public class Move {
 			gameState[move[0]] = gameState[move[0]] ++;
 			gameState[move[1]] = gameState[move[1]] --;
 		}
+	}
+		
+	private static void bearOffMove(int[] move){
+		switch (Game.getTurn()) {
+		case WHITE:
+			gameState[move[0]] = gameState[move[0]] --;
+		case RED:
+			gameState[move[0]] = gameState[move[0]] ++;
+		}
+	}
+	
+	private static void captureMove(int[] move){
+		switch (Game.getTurn()) {
+		case WHITE:
+			gameState[move[0]] = gameState[move[0]] --;
+			gameState[move[1]] = 1;
+			gameState[0] = gameState[0] --;
+		case RED:
+			gameState[move[0]] = gameState[move[0]] ++;
+			gameState[move[1]] = -1;
+			gameState[25] = gameState[25] ++;	
+		}
+	}
+
+	private static boolean checkValid(List<int[]> moves){
+		// TODO 
+		// add proper implementation
+		return true;
+	}
+		
 }
