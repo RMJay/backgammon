@@ -21,15 +21,15 @@ public class Spike
 	public static void resetSpikes()
 	{
 		//totalSpikes[24].counter = -1;
-		//totalSpikes[24].counter = 2; //white is positive
-		//totalSpikes[1].counter = -2; // red is negative
-		totalSpikes[6].counter = 1;
-		//totalSpikes[8].counter = 3;
-		//totalSpikes[12].counter = -5;
-		//totalSpikes[13].counter = 5;
-		//totalSpikes[17].counter = -3;
-		totalSpikes[19].counter = -1;
-		totalSpikes[25].counter = 1;
-		totalSpikes[0].counter = -1;
+		totalSpikes[24].counter = 2; //white is positive
+		totalSpikes[1].counter = -2; // red is negative
+		totalSpikes[6].counter = 10;
+		totalSpikes[8].counter = 3;
+		totalSpikes[12].counter = -5;
+		totalSpikes[13].counter = 5;
+		totalSpikes[17].counter = -3;
+		totalSpikes[19].counter = -5;
+		//totalSpikes[25].counter = 1;
+		//totalSpikes[0].counter = -1;
 	}
 }
