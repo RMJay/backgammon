@@ -8,7 +8,7 @@ public class Test {
 		System.out.println();
 		Board.printBoard();
 		System.out.println();
-		System.out.println("There are " + Game.countWhitePieces() + " white pieces remaining and " + Game.countRedPieces() + " red pieces remaining");
+		//System.out.println("There are " + Game.countWhitePieces() + " white pieces remaining and " + Game.countRedPieces() + " red pieces remaining");
 	}
 
 }

@@ -27,7 +27,7 @@ public class Game {
 		return dicePair;
 	}
 	
-	public static void play(){
+	public static void play() throws InputFormatException{
 		
 		do {
 			dicePair = diceRoll();
@@ -47,9 +47,10 @@ public class Game {
 			System.out.println();
 			System.out.println("The dice roll is: " + stringDicePair());
 			System.out.print(turn + " make your move: ");
+			Move.nextMove();
+			
 			//break;
 			
-			gameState = Move.nextMove();
 			updateGameOver(); 
 			
 			if(gameOver){

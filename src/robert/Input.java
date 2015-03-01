@@ -17,7 +17,7 @@ public class Input {
 
 	protected static List<int[]> receiveMoves() throws InputFormatException{
 		List<int[]> moves;
-		String input = " 3-6:(24|5),(4|5),(7|81),(9|1);";
+		String input = readKeyboard();
 		
 		int count = 0;
 		int maxTries = 3;

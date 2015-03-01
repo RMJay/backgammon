@@ -1,5 +1,6 @@
 package robert;
 
+import java.util.Arrays;
 import java.util.List;
 
 import robert.Game.player;
@@ -12,14 +13,23 @@ public class Move {
 		NORMAL, BEAR_OFF, CAPTURE
 	}
 	
-	protected static int[] nextMove() {
+	protected static int[] nextMove() throws InputFormatException {
 
+		//bullshit
+		gameState = Game.getGameState();
+		
 		List<int[]> moves;
+
 		do {
 			moves = Input.receiveMoves();
 		} while (!checkValid(moves));
 
-		makeMoves(moves);
+		for (int[] move : moves){
+			System.out.println(Arrays.toString(move));
+		}
+
+		
+		//makeMoves(moves);
 		return gameState;
 	}
 
