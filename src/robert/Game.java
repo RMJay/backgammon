@@ -1,26 +1,33 @@
 package robert;
 
-import game.Piece;
-import game.Visualisation;
-
 import java.util.Arrays;
-
-import board.Spike;
 
 public class Game {
 
 	public enum player{
 		WHITE, RED
 	}
+	//From protocol server is always RED, client is always WHITE
 	
-	protected static int[] gameState = new int[26];
-	protected static boolean gameOver = false;
-	protected static player winner;
+	private static int[] gameState = new int[26];
+	private static player turn;
+	private static int[] dicePair;
+	private static boolean gameOver = false;
+	private static player winner;
+	
+	protected static int[] getGameState(){
+		return gameState;
+	}
+	
+	protected static player getturn(){
+		return turn;
+	}
+	
+	protected static int[] getDicePair(){
+		return dicePair;
+	}
 	
 	public static void play(){
-
-		int[] dicePair;
-		player turn;
 		
 		do {
 			dicePair = diceRoll();
@@ -36,13 +43,13 @@ public class Game {
 		{
 			printState();
 			System.out.println();
-			Board.printBoard(gameState);
+			Board.printBoard();
 			System.out.println();
 			System.out.println("It is " + turn +"s turn, with a dice roll of: " + stringDicePair(dicePair));
 			
-			break;
-			/*
-			gameState = Move.nextMove(turn,dicePair, gameState);
+			//break;
+			
+			gameState = Move.nextMove();
 			updateGameOver(); 
 			
 			if(gameOver){
@@ -56,7 +63,6 @@ public class Game {
 			}
 			
 			dicePair = diceRoll();
-			*/
 		}
 				
 	}
@@ -100,7 +106,7 @@ public class Game {
 	
 	protected static int countWhitePieces(){ // including captured pieces
 		int count = 0;
-		for (int spike = 1; spike <=24; spike++){
+		for (int spike = 1; spike <= 24; spike++){
 			if (gameState[spike] > 0){
 				count = count + Math.abs(gameState[spike]);
 			}
@@ -111,7 +117,7 @@ public class Game {
 	
 	protected static int countRedPieces(){ // including captured pieces
 		int count = 0;
-		for (int spike = 1; spike <=24; spike++){
+		for (int spike = 1; spike <= 24; spike++){
 			if (gameState[spike] < 0){
 				count = count + Math.abs(gameState[spike]);
 			}

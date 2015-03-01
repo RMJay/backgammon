@@ -6,7 +6,7 @@ public class Test {
 		Game.initialize();
 		Game.printState();
 		System.out.println();
-		Board.printBoard(Game.gameState);
+		Board.printBoard();
 		System.out.println();
 		System.out.println("There are " + Game.countWhitePieces() + " white pieces remaining and " + Game.countRedPieces() + " red pieces remaining");
 	}

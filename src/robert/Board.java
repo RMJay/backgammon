@@ -4,8 +4,10 @@ import board.Spike;
 
 public class Board {
 
-	protected static void printBoard(int[] gameState) {
+	protected static void printBoard() {
 
+		int[] gameState = Game.getGameState();
+		
 		int bottomHalfRows = dynamicReSize(gameState)[0];
 		int topHalfRows = dynamicReSize(gameState)[1];
 
