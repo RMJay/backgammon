@@ -9,7 +9,7 @@ public class Move {
 	private static int[] gameState;
 	
 	private enum moveType {
-		NORMAL, BEAR_OFF
+		NORMAL, BEAR_OFF, CAPTURE
 	}
 	
 	protected static int[] nextMove() {
