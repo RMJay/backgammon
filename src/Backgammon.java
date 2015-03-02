@@ -2,9 +2,9 @@
 
 import java.util.Arrays;
 
-import robert.Board;
-import robert.Game;
-import robert.InputFormatException;
+import model.Board;
+import model.Game;
+import model.InputFormatException;
 
 public class Backgammon {
 

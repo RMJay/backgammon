@@ -1,9 +1,9 @@
-package robert;
+package model;
 
 import java.util.Arrays;
 import java.util.List;
 
-import robert.Game.player;
+import model.Game.player;
 
 public class Move {
 

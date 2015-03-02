@@ -1,4 +1,4 @@
-package robert;
+package model;
 
 import java.util.Arrays;
 

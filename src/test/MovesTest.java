@@ -2,9 +2,9 @@ package test;
 
 import java.util.List;
 
-import robert.Game;
-import robert.Input;
-import robert.InputFormatException;
+import model.Game;
+import model.Input;
+import model.InputFormatException;
 
 public class MovesTest {
 

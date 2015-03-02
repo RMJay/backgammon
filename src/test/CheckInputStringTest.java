@@ -2,7 +2,7 @@ package test;
 
 import java.util.Arrays;
 
-import robert.Input;
+import model.Input;
 
 import com.sun.xml.internal.ws.util.StringUtils;
 

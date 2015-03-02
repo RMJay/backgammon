@@ -1,4 +1,4 @@
-package robert;
+package model;
 
 import board.Spike;
 

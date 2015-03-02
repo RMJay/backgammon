@@ -1,4 +1,4 @@
-package robert;
+package model;
 
 public class Test {
 
