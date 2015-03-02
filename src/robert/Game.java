@@ -15,7 +15,7 @@ public class Game {
 	private static boolean gameOver = false;
 	private static player winner;
 	
-	protected static int[] getGameState(){
+	public static int[] getGameState(){
 		return gameState;
 	}
 	

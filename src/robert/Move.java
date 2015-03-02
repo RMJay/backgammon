@@ -19,17 +19,18 @@ public class Move {
 		gameState = Game.getGameState();
 		
 		List<int[]> moves;
-
+		moves = Input.receiveMoves();
+		/*
 		do {
 			moves = Input.receiveMoves();
 		} while (!checkValid(moves));
 
 		for (int[] move : moves){
 			System.out.println(Arrays.toString(move));
-		}
+		}*/
 
-		
 		//makeMoves(moves);
+		
 		return gameState;
 	}
 

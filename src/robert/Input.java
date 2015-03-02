@@ -1,75 +1,68 @@
 package robert;
 
-import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import com.sun.xml.internal.ws.util.StringUtils;
 
 public class Input {
 
-	static BufferedReader _keyboard;
-
-	static void error(String s) {
-		System.err.println("-!- " + s);
-	}
-
-	protected static List<int[]> receiveMoves() throws InputFormatException{
-		List<int[]> moves;
-		String input = readKeyboard();
-		
-		int count = 0;
-		int maxTries = 3;
-		while(count <= maxTries) {
+	static Scanner _keyboard = new Scanner(System.in);
+	
+	public static List<int[]> receiveInput() throws InputFormatException{
+				
+		while(true) {
 		    try {
-		    	moves = parseMoves(input);
-		    	return moves;
+		    	String inputString = _keyboard.nextLine();
+		    	return parseInput(inputString);   	
 		    } catch (InputFormatException e) {
 		        System.err.println("Invalid input, please try again");
-		        if (++count == maxTries) throw e;
 		    } 
 		}
-		return null;
-	
-		
 	}
 
-	private static List<int[]> parseMoves(String input)
-			throws InputFormatException {
-
-		List<int[]> moves = new ArrayList<int[]>();
-
-		input = input.replaceAll("\\s", "");
-		String[] split = input.split(":");
-
-		String stringDice = split[0];
-		String stringMoves = split[1];
-
-		if (!stringDice.matches("\\d-\\d")) {
+	protected static List<int[]> parseInput(String inputString) throws InputFormatException{
+		
+		if (!checkInputString(inputString)){
 			throw new InputFormatException();
 		}
-
-		if (!stringMoves.matches("(\\([\\d]+\\|[\\d]+\\),?)+;?")) {
-			throw new InputFormatException();
+		
+		List<int[]> inputs = new ArrayList<int[]>();
+		
+		inputString = inputString.replaceAll("\\s", "");
+		String[] split = inputString.split(":");
+		
+		inputs.add(parseDice(split[0]));
+		
+		List<String> listStringMoves = listStringMoves(split[1]);
+		
+		for (String stringMove: listStringMoves){
+			inputs.add(parseMove(stringMove));
 		}
-
+		
+		return inputs;
+		
+	}
+	
+	protected static int[] parseDice(String inputStringDice){
+		String[] stringArray = inputStringDice.split("-");
+		int dice1 = Integer.parseInt(stringArray[0]);
+		int dice2 = Integer.parseInt(stringArray[1]);
+		return new int[]{dice1, dice2};
+	}
+	
+	protected static List<String> listStringMoves(String inputStringMoves){
 		List<String> listStringMoves = new ArrayList<String>();
-		Pattern p = Pattern.compile("(\\([\\d]+\\|[\\d]+\\))");
-		Matcher m = p.matcher(stringMoves);
+		Pattern p = Pattern.compile("\\([\\d]+\\|[\\d]+\\)");
+		Matcher m = p.matcher(inputStringMoves);
 		while (m.find()) {
 			listStringMoves.add(m.group());
 		}
-
-		for (String stringMove : listStringMoves) {
-			int[] move = parseMove(stringMove);
-			moves.add(move);
-		}
-
-		return moves;
+		return listStringMoves;
 	}
-
-	private static int[] parseMove(String stringMove) {
+	
+	protected static int[] parseMove(String stringMove) {
 		stringMove = stringMove.replaceAll("[()]", "");
 		String[] stringArrayMove = stringMove.split("\\|");
 		int spikeFrom = Integer.parseInt(stringArrayMove[0]);
@@ -77,20 +70,43 @@ public class Input {
 		return new int[] { spikeFrom, spikeTo };
 	}
 
-	protected static String readKeyboard() {
-
-		String line = null;
-
-		try {
-			if (_keyboard.ready())
-				line = _keyboard.readLine();
-		} catch (java.io.IOException e) {
-			error("readKeyboard(): problem reading! " + e.getClass().getName());
-			System.exit(-1);
+	protected static boolean checkInputString(String inputString){
+		boolean check = false;
+		if(countChar(inputString,':') != 1){
+			return false;
 		}
+		
+		String[] split = inputString.split(":");
+		String inputStringDice = split[0];
+		String inputStringMoves = split[1];
+		
+		if(!checkInputStringDice(inputStringDice)){
+			return false;
+		}
+		
+		if(!checkInputStringMoves(inputStringMoves)){
+			return false;
+		}
+			
+		return true;
+	}
+	
+	protected static boolean checkInputStringDice(String inputStringDice){
+		return inputStringDice.matches("\\d-\\d");
+	}
+	
+	protected static boolean checkInputStringMoves(String inputStringMoves){
+		return inputStringMoves.matches("(\\([\\d]+\\|[\\d]+\\),?)+;?");
+	}
 
-		return line;
-
+	protected static int countChar(String s, char counted){
+		int counter = 0;
+		for( int i=0; i<s.length(); i++ ) {
+		    if(s.charAt(i) == ':') {
+		        counter++;
+		    } 
+		}
+		return counter;
 	}
 
 }
