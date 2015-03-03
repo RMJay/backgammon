@@ -3,97 +3,157 @@ package model;
 import java.util.Arrays;
 import java.util.List;
 
-import model.Game.player;
+import Exceptions.InputFormatException;
+import Exceptions.InvalidMoveException;
 
 public class Move {
 
-	private static int[] gameState;
-	
-	private enum moveType {
-		NORMAL, BEAR_OFF, CAPTURE
+	protected enum DiceType {
+		DOUBLES, SINGLES;
 	}
 	
-	protected static int[] nextMove() throws InputFormatException {
-
-		//bullshit
-		gameState = Game.getGameState();
-		
+	//private static int[] gameState;
+	private static int[] dicePair;
+	private static DiceType diceType;
+	private static Game.InputType inputType;
+	
+	protected static int[] getDicePair(){
+		return dicePair;
+	}
+	
+	protected static DiceType getDiceType(){
+		return diceType;
+	}
+	
+	protected static int[] nextMove(int[] state){
+		initializeMove();
 		List<int[]> moves;
-		moves = Input.receiveMoves();
-		/*
-		do {
-			moves = Input.receiveMoves();
-		} while (!checkValid(moves));
-
-		for (int[] move : moves){
-			System.out.println(Arrays.toString(move));
-		}*/
-
-		//makeMoves(moves);
-		
-		return gameState;
+		switch(inputType){
+		case MANUAL:
+			dicePair = diceRoll();
+			//dicePair = new int[] {2,4}; useful to fix dice for debugging
+			setDiceType();
+			System.out.print("dice roll is: ");
+			System.out.print(Arrays.toString(dicePair)); //TODO remove
+			System.out.print(" ");
+			System.out.println(diceType);
+			do {
+				try {
+					moves = Input.receiveManual();
+					return makeMoves(moves, state);	
+				} catch (InputFormatException e) {
+					System.err.println("Invalid input format, please try again");	
+				} catch (InvalidMoveException e) {
+			    	System.err.println("Invalid moves, please try again: " + e.getMessage());
+				}
+			} while(true); 
+		case NETWORK:
+			do {
+				try {
+					moves = Input.receiveNetwork();
+					dicePair = moves.remove(0);
+					setDiceType();
+			    	return makeMoves(moves,state);  	
+				} catch (InputFormatException e) {
+					System.err.println("Invalid input format, please try again");	
+				} catch (InvalidMoveException e) {
+			    	System.err.println("Invalid moves, please try again: " + e.getMessage());
+				}
+			} while (true);
+		}
+		return null;
 	}
-
-	private static void makeMoves(List<int[]> moves) {
-		for (int[] move : moves) {
-			makeMove(move);
+	
+	protected static void initializeMove(){
+		switch(Game.getTurn()){
+		case WHITE:
+			inputType = Game.getWhiteInputType(); break;
+		case RED:
+			inputType = Game.getRedInputType(); break;
 		}
 	}
+		
+	private static int[] diceRoll(){
+		int dice1 = (int)(Math.random()*6 +1);
+		int dice2 = (int)(Math.random()*6 +1);
+		return new int[] {dice1,dice2};
+	}
 
-	private static void makeMove(int[] move) {
+	private static int[] makeMoves(List<int[]> moves, int[] state) throws InvalidMoveException {
+		Rules.checkMoves(moves, state);
+		
+		for (int[] move : moves) {
+			state = makeMove(move, state);
+			//Board.printBoard(state);
+		}
+		return state;
+	}
+
+	protected static int[] makeMove(int[] move, int[] state) {
 		// (StartPosition | EndPosition)
 				
-		switch(moveType(move)) {
-		case NORMAL: normalMove(move);
-		case BEAR_OFF: bearOffMove(move);
-		case CAPTURE: captureMove(move);
+		switch(Rules.getMoveType(move, state)) {
+		case NORMAL: return normalMove(move, state); 
+		case BEAR_OFF: return bearOffMove(move, state); 
+		case CAPTURE: return captureMove(move, state);
 		}
-
+		return null;
 	}
 	
-	private static moveType moveType(int[] move){
-		// TODO 
-		// add other move types
-		return moveType.NORMAL;
-	}
-	
-	private static void normalMove(int[] move) {
+	private static int[] normalMove(int[] move, int[] state) {
 		switch (Game.getTurn()) {
-		case WHITE: 
-			gameState[move[0]] = gameState[move[0]] --;
-			gameState[move[1]] = gameState[move[1]] ++;
-		case RED:
-			gameState[move[0]] = gameState[move[0]] ++;
-			gameState[move[1]] = gameState[move[1]] --;
+		case WHITE:{ 
+			state[move[0]] --;
+			state[move[1]] ++;
+		} break;
+		case RED:{
+			state[move[0]] ++;
+			state[move[1]] --;
+		} break;
 		}
+		return state;
 	}
 		
-	private static void bearOffMove(int[] move){
+	private static int[] bearOffMove(int[] move, int[] state){
 		switch (Game.getTurn()) {
-		case WHITE:
-			gameState[move[0]] = gameState[move[0]] --;
-		case RED:
-			gameState[move[0]] = gameState[move[0]] ++;
+		case WHITE:{
+			state[move[0]] --;
+		} break;
+		case RED:{
+			state[move[0]] ++;
+		} break;
 		}
+		return state;
 	}
 	
-	private static void captureMove(int[] move){
+	private static int[] captureMove(int[] move, int[] state){
 		switch (Game.getTurn()) {
-		case WHITE:
-			gameState[move[0]] = gameState[move[0]] --;
-			gameState[move[1]] = 1;
-			gameState[0] = gameState[0] --;
-		case RED:
-			gameState[move[0]] = gameState[move[0]] ++;
-			gameState[move[1]] = -1;
-			gameState[25] = gameState[25] ++;	
+		case WHITE:{
+			state[move[0]] --;
+			state[move[1]] = 1;
+			state[0] --;
+		} break;
+		case RED:{
+			state[move[0]] ++;
+			state[move[1]] = -1;
+			state[25] ++;	
+		} break;
+		}
+		return state;
+	}
+	
+	protected static void setDiceType(){
+		if(dicePair[0] != dicePair[1]){
+			diceType = DiceType.SINGLES;
+		}
+		if(dicePair[0] == dicePair[1]){
+			diceType = DiceType.DOUBLES;
 		}
 	}
 
-	private static boolean checkValid(List<int[]> moves){
-		// TODO 
-		// add proper implementation
-		return true;
+	protected static String stringDicePair(){
+	
+		return Integer.toString(dicePair[0]) + "-" + Integer.toString(dicePair[1]) + ":";
 	}
-		
+			
 }

@@ -1,30 +1,32 @@
 package model;
 
-import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-import com.sun.xml.internal.ws.util.StringUtils;
+import Exceptions.InputFormatException;
 
 public class Input {
 
 	static Scanner _keyboard = new Scanner(System.in);
 	
-	public static List<int[]> receiveInput() throws InputFormatException{
+	public static List<int[]> receiveNetwork() throws InputFormatException{
 				
-		while(true) {
-		    try {
-		    	String inputString = _keyboard.nextLine();
-		    	return parseInput(inputString);   	
-		    } catch (InputFormatException e) {
-		        System.err.println("Invalid input, please try again");
-		    } 
-		}
+	    	String inputString = _keyboard.nextLine();
+	    	inputString = inputString.replaceAll("\\s", "");
+	    	return parseNetworkInput(inputString);   			
+	}
+	
+	public static List<int[]> receiveManual() throws InputFormatException{
+		
+	    	System.out.print(Move.stringDicePair());
+	    	String inputString = _keyboard.nextLine();
+			inputString = inputString.replaceAll("\\s", "");
+	    	return parseManualInput(inputString);   	
 	}
 
-	protected static List<int[]> parseInput(String inputString) throws InputFormatException{
+	protected static List<int[]> parseNetworkInput(String inputString) throws InputFormatException{
 		
-		if (!checkInputString(inputString)){
+		if (!checkNetworkInputString(inputString)){
 			throw new InputFormatException();
 		}
 		
@@ -45,6 +47,24 @@ public class Input {
 		
 	}
 	
+	protected static List<int[]> parseManualInput(String inputString) throws InputFormatException{
+		
+		if (!checkInputStringMoves(inputString)){
+			throw new InputFormatException();
+		}
+		
+		List<int[]> inputs = new ArrayList<int[]>();
+		
+		List<String> listStringMoves = listStringMoves(inputString);
+		
+		for (String stringMove: listStringMoves){
+			inputs.add(parseMove(stringMove));
+		}
+		
+		return inputs;
+		
+	}
+
 	protected static int[] parseDice(String inputStringDice){
 		String[] stringArray = inputStringDice.split("-");
 		int dice1 = Integer.parseInt(stringArray[0]);
@@ -70,8 +90,8 @@ public class Input {
 		return new int[] { spikeFrom, spikeTo };
 	}
 
-	protected static boolean checkInputString(String inputString){
-		boolean check = false;
+	protected static boolean checkNetworkInputString(String inputString){
+
 		if(countChar(inputString,':') != 1){
 			return false;
 		}

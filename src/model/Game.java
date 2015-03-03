@@ -2,79 +2,44 @@ package model;
 
 import java.util.Arrays;
 
+import Exceptions.InputFormatException;
+
 public class Game {
 
-	public enum player{
+	//From protocol server is always RED, client is always WHITE
+	public enum PlayerColour{
 		WHITE, RED
 	}
-	//From protocol server is always RED, client is always WHITE
+	
+	public enum InputType{
+		NETWORK,MANUAL
+	}
 	
 	private static int[] gameState = new int[26];
-	private static player turn;
-	private static int[] dicePair;
+	private static PlayerColour turn;
+	private static InputType redInputType;
+	private static InputType whiteInputType;
 	private static boolean gameOver = false;
-	private static player winner;
+	private static PlayerColour winner;
 	
 	public static int[] getGameState(){
 		return gameState;
 	}
 	
-	protected static player getTurn(){
+	protected static PlayerColour getTurn(){
 		return turn;
 	}
-	
-	protected static int[] getDicePair(){
-		return dicePair;
-	}
-	
-	public static void play() throws InputFormatException{
-		
-		do {
-			dicePair = diceRoll();
-		} while (dicePair[0] == dicePair[1]);
-		
-		if (dicePair[0] > dicePair[1]) {
-			turn = player.WHITE;
-		} else {
-			turn = player.RED;
-		}
-		
-		while(!gameOver)
-		{
-			printState();
-			System.out.println();
-			Board.printBoard();
-			System.out.println();
-			System.out.println("The dice roll is: " + stringDicePair());
-			System.out.print(turn + " make your move: ");
-			Move.nextMove();
-			
-			//break;
-			
-			updateGameOver(); 
-			
-			if(gameOver){
-				System.out.println("Game over, the winner is: " + winner);
-				break;
-			}
-			
-			switch(turn) {
-			case WHITE: turn = player.RED; break;
-			case RED: turn = player.WHITE; break;
-			}
-			
-			dicePair = diceRoll();
-		}
-				
-	}
-	
-	protected static void printState(){
-		System.out.print("gameState variable: ");
-		System.out.println(Arrays.toString(gameState));
-	}
 
-	public static void initialize(){
+	protected static InputType getRedInputType(){
+		return redInputType;
+	}
 	
+	protected static InputType getWhiteInputType(){
+		return whiteInputType;
+	}
+	
+	public static void initialize(){
+		
 		int[] initialState = new int[26];
 		initialState[1] = -2;
 		initialState[6] = 5;
@@ -86,22 +51,52 @@ public class Game {
 		initialState[24] = 2;
 		
 		gameState = initialState;
-		
+		redInputType = InputType.MANUAL;
+		whiteInputType = InputType.MANUAL;
 	}
-
-	private static int[] diceRoll(){
-		int dice1 = (int)(Math.random()*6 +1);
-		int dice2 = (int)(Math.random()*6 +1);
-		return new int[] {dice1,dice2};
+	
+	public static void play() throws InputFormatException{
+		
+		flipForFirstTurn();
+		
+		while(!gameOver)
+		{
+			printState(gameState);
+			System.out.println();
+			Board.printBoard(gameState);
+			System.out.println();
+			System.out.println(turn + " make your move: ");
+			
+			gameState = Move.nextMove(gameState);
+			
+			updateGameOver(); 
+			
+			if(gameOver){
+				System.out.println("Game over, the winner is: " + winner);
+				break;
+			}
+			
+			switch(turn) {
+			case WHITE: turn = PlayerColour.RED; break;
+			case RED: turn = PlayerColour.WHITE; break;
+			}
+			
+		}
+				
+	}
+	
+	protected static void printState(int[] state){
+		System.out.print("gameState variable: ");
+		System.out.println(Arrays.toString(state));
 	}
 
 	private static void updateGameOver(){
 		if (countWhitePieces() == 0){
 			gameOver = true;
-			winner = player.WHITE;
+			winner = PlayerColour.WHITE;
 		} else if (countRedPieces() == 0){
 			gameOver = true;
-			winner = player.RED;
+			winner = PlayerColour.RED;
 		}
 	}
 	
@@ -127,8 +122,10 @@ public class Game {
 		return count;
 	}
 
-	protected static String stringDicePair(){
-		
-		return Integer.toString(dicePair[0]) + "-" + Integer.toString(dicePair[1]);
+	protected static void flipForFirstTurn(){
+		if ((int)(Math.random()*2) == 0){
+			turn = PlayerColour.WHITE;
+		} else { turn = PlayerColour.RED;
+		}
 	}
 }

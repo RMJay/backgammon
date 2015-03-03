@@ -1,4 +1,4 @@
-package model;
+package test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,12 +7,15 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParsingTest {
+import model.Input;
+import Exceptions.InputFormatException;
+
+public class ManualInputTest {
 
 	public static void main(String[] args) throws InputFormatException{
 	
-		System.out.println("Please enter string: ");
-		List<int[]> inputs = Input.receiveInput();
+		System.out.println("Please enter manual input string: ");
+		List<int[]> inputs = Input.receiveManual();
 		printInputs(inputs);
 					
 	}
@@ -21,15 +24,15 @@ public class ParsingTest {
 				
 		ListIterator<int[]> iterator = inputs.listIterator(); 
 		
+		int no = 1;
 		for (int i = 1; i <= inputs.size(); i++){
-			if (i == 1){
-				System.out.print("dice: ");
-			} else {
-				int no = i - 1;
-				System.out.print("move" + no + ": ");
-			}
+			
+			System.out.print("move" + no + ": ");
+			no = no++;
+			
 			System.out.println(Arrays.toString(iterator.next()));
 		}
 	}
 
+	//3-5:(1|2),(2|1),(3|1);
 }
