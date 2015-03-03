@@ -15,10 +15,16 @@ public class Game {
 		NETWORK,MANUAL
 	}
 	
+	public enum PlayerType{
+		HUMAN,AI
+	}
+	
 	private static int[] gameState = new int[26];
 	private static PlayerColour turn;
-	private static InputType redInputType;
 	private static InputType whiteInputType;
+	private static InputType redInputType;
+	private static PlayerType whitePlayerType;
+	private static PlayerType redPlayerType;
 	private static boolean gameOver = false;
 	private static PlayerColour winner;
 	
@@ -38,6 +44,14 @@ public class Game {
 		return whiteInputType;
 	}
 	
+	protected static PlayerType getRedPlayerType(){
+		return redPlayerType;
+	}
+	
+	protected static PlayerType getWhitePlayerType(){
+		return whitePlayerType;
+	}
+	
 	public static void initialize(){
 		
 		int[] initialState = new int[26];
@@ -51,8 +65,10 @@ public class Game {
 		initialState[24] = 2;
 		
 		gameState = initialState;
-		redInputType = InputType.MANUAL;
 		whiteInputType = InputType.MANUAL;
+		redInputType = InputType.MANUAL;
+		whitePlayerType = PlayerType.HUMAN;
+		redPlayerType = PlayerType.AI;
 	}
 	
 	public static void play() throws InputFormatException{

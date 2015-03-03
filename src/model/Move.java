@@ -12,7 +12,6 @@ public class Move {
 		DOUBLES, SINGLES;
 	}
 	
-	//private static int[] gameState;
 	private static int[] dicePair;
 	private static DiceType diceType;
 	private static Game.InputType inputType;
