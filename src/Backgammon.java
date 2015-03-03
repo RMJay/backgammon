@@ -7,9 +7,14 @@ public class Backgammon {
 
 	public static void main(String[] args) throws InputFormatException {
 		
-		Game.initialize();	
+		someSortOfNetworkSetUpMethod()
+			
 		Game.play();
 		
+	}
+	
+	someSortOfNetworkSetUpMethod(){
+		Game.initialize(amIClientOrServer, serverTypeAiOrHuman, clientTypeAiOrHuman);
 	}
 
 }

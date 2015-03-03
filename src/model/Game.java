@@ -11,8 +11,8 @@ public class Game {
 		WHITE, RED
 	}
 	
-	public enum InputType{
-		NETWORK,MANUAL
+	public enum InputLocation{
+		SERVER,CLIENT
 	}
 	
 	public enum PlayerType{
@@ -21,8 +21,8 @@ public class Game {
 	
 	private static int[] gameState = new int[26];
 	private static PlayerColour turn;
-	private static InputType whiteInputType;
-	private static InputType redInputType;
+	private static InputLocation whiteInputLocation;
+	private static InputLocation redInputLocation;
 	private static PlayerType whitePlayerType;
 	private static PlayerType redPlayerType;
 	private static boolean gameOver = false;
@@ -36,12 +36,12 @@ public class Game {
 		return turn;
 	}
 
-	protected static InputType getRedInputType(){
-		return redInputType;
+	protected static InputLocation getRedInputLocation(){
+		return redInputLocation;
 	}
 	
-	protected static InputType getWhiteInputType(){
-		return whiteInputType;
+	protected static InputLocation getWhiteInputLocation(){
+		return whiteInputLocation;
 	}
 	
 	protected static PlayerType getRedPlayerType(){
@@ -65,18 +65,19 @@ public class Game {
 		initialState[24] = 2;
 		
 		gameState = initialState;
-		whiteInputType = InputType.MANUAL;
-		redInputType = InputType.MANUAL;
+		whiteInputLocation = InputLocation.SERVER;
+		redInputLocation = InputLocation.SERVER;
 		whitePlayerType = PlayerType.HUMAN;
-		redPlayerType = PlayerType.AI;
+		redPlayerType = PlayerType.HUMAN;
 	}
 	
 	public static void play() throws InputFormatException{
 		
 		flipForFirstTurn();
-		
+		int turnNo = 1;
 		while(!gameOver)
 		{
+			System.out.println("Turn " + turnNo);
 			printState(gameState);
 			System.out.println();
 			Board.printBoard(gameState);
@@ -84,6 +85,7 @@ public class Game {
 			System.out.println(turn + " make your move: ");
 			
 			gameState = Move.nextMove(gameState);
+			System.out.println();
 			
 			updateGameOver(); 
 			
@@ -97,6 +99,7 @@ public class Game {
 			case RED: turn = PlayerColour.WHITE; break;
 			}
 			
+			turnNo++; 
 		}
 				
 	}

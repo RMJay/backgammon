@@ -14,7 +14,7 @@ public class Move {
 	
 	private static int[] dicePair;
 	private static DiceType diceType;
-	private static Game.InputType inputType;
+	private static Game.InputLocation inputLocation;
 	
 	protected static int[] getDicePair(){
 		return dicePair;
@@ -26,49 +26,58 @@ public class Move {
 	
 	protected static int[] nextMove(int[] state){
 		initializeMove();
-		List<int[]> moves;
-		switch(inputType){
-		case MANUAL:
-			dicePair = diceRoll();
-			//dicePair = new int[] {2,4}; useful to fix dice for debugging
-			setDiceType();
-			System.out.print("dice roll is: ");
-			System.out.print(Arrays.toString(dicePair)); //TODO remove
-			System.out.print(" ");
-			System.out.println(diceType);
-			do {
-				try {
-					moves = Input.receiveManual();
-					return makeMoves(moves, state);	
-				} catch (InputFormatException e) {
-					System.err.println("Invalid input format, please try again");	
-				} catch (InvalidMoveException e) {
-			    	System.err.println("Invalid moves, please try again: " + e.getMessage());
-				}
-			} while(true); 
-		case NETWORK:
-			do {
-				try {
-					moves = Input.receiveNetwork();
-					dicePair = moves.remove(0);
-					setDiceType();
-			    	return makeMoves(moves,state);  	
-				} catch (InputFormatException e) {
-					System.err.println("Invalid input format, please try again");	
-				} catch (InvalidMoveException e) {
-			    	System.err.println("Invalid moves, please try again: " + e.getMessage());
-				}
-			} while (true);
+		switch(inputLocation){
+		case SERVER:
+			return nextServerMove(state);
+		case CLIENT:
+			return nextClientMove(state);
 		}
 		return null;
 	}
+
+	protected static int[] nextServerMove(int[] state){
+		List<int[]> moves;
+		dicePair = diceRoll();
+		//dicePair = new int[] {2,4}; useful to fix dice for debugging
+		setDiceType();
+		System.out.print("dice roll is: ");
+		System.out.print(Arrays.toString(dicePair)); //TODO remove
+		System.out.print(" ");
+		System.out.println(diceType);
+		do {
+			try {
+				moves = Input.receiveManual();
+				return makeMoves(moves, state);	
+			} catch (InputFormatException e) {
+				System.err.println("Invalid input format, please try again");	
+			} catch (InvalidMoveException e) {
+		    	System.err.println("Invalid moves, please try again: " + e.getMessage());
+			}
+		} while(true); 
+	}
 	
-	protected static void initializeMove(){
+	protected static int[] nextClientMove(int[] state){
+		List<int[]> moves;
+		do {
+			try {
+				moves = Input.receiveNetwork();
+				dicePair = moves.remove(0);
+				setDiceType();
+		    	return makeMoves(moves,state);  	
+			} catch (InputFormatException e) {
+				System.err.println("Invalid input format, please try again");	
+			} catch (InvalidMoveException e) {
+		    	System.err.println("Invalid moves, please try again: " + e.getMessage());
+			}
+		} while (true);
+	}
+	
+ 	protected static void initializeMove(){
 		switch(Game.getTurn()){
 		case WHITE:
-			inputType = Game.getWhiteInputType(); break;
+			inputLocation = Game.getWhiteInputLocation(); break;
 		case RED:
-			inputType = Game.getRedInputType(); break;
+			inputLocation = Game.getRedInputLocation(); break;
 		}
 	}
 		
