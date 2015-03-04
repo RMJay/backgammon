@@ -20,7 +20,7 @@ public class Rules {
 		checkWrongDirections(moves);
 		checkDistances(moves);
 		
-		int[] tempGameState = Arrays.copyOf(state, state.length);
+		int[] tempGameState = state.clone();
 		for (int[] move : moves) {
 			checkMove(move, tempGameState);
 			tempGameState = Move.makeMove(move, tempGameState);

@@ -8,7 +8,7 @@ public class Board {
 		int topHalfRows = dynamicReSize(state)[1];
 
 		System.out.println("13 14 15 16 17 18  19 20 21 22 23 24");
-		System.out.println("************************************");
+		System.out.println("************************************ Total pieces remaining: "+ Game.countAllPieces());
 		for (int row = 1; row <= topHalfRows; row++) {
 			for (int spike = 13; spike <= 24; spike++) {
 				if (spike == 19){

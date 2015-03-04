@@ -11,17 +11,40 @@ public class Input {
 	
 	public static List<int[]> receiveNetwork() throws InputFormatException{
 				
-	    	String inputString = _keyboard.nextLine();
-	    	inputString = inputString.replaceAll("\\s", "");
-	    	return parseNetworkInput(inputString);   			
+    	String inputString = _keyboard.nextLine();
+    	inputString = inputString.replaceAll("\\s", "");
+    	return parseNetworkInput(inputString);   			
 	}
 	
 	public static List<int[]> receiveManual() throws InputFormatException{
 		
-	    	System.out.print(Move.stringDicePair());
-	    	String inputString = _keyboard.nextLine();
+    	System.out.print(Move.stringDicePair());
+    	String inputString = _keyboard.nextLine();
+		inputString = inputString.replaceAll("\\s", "");
+    	return parseManualInput(inputString);   	
+	}
+	
+	public static List<int[]> receiveAI(String inputString) throws InputFormatException{
+		
+		System.out.print(Move.stringDicePair());
+		inputString = inputString.replaceAll("\\s", "");
+    	return parseManualInput(inputString);   	
+	}
+	
+	public static Game.PlayerType receivePlayerType(Game.PlayerColour colour){
+		System.out.println("Please enter the player type for " + colour + ": AI or HUMAN");
+		do{
+			String inputString = _keyboard.nextLine();
 			inputString = inputString.replaceAll("\\s", "");
-	    	return parseManualInput(inputString);   	
+			if(inputString.equalsIgnoreCase("AI")){
+				return Game.PlayerType.AI;
+			} else if(inputString.equalsIgnoreCase("HUMAN")){
+				return Game.PlayerType.HUMAN;
+			} else {
+				System.out.println("Sorry I couldn't understand, please enter the player type for " + colour + ": AI or HUMAN");
+			}
+			
+		} while (true);
 	}
 
 	protected static List<int[]> parseNetworkInput(String inputString) throws InputFormatException{
@@ -64,7 +87,7 @@ public class Input {
 		return inputs;
 		
 	}
-
+	
 	protected static int[] parseDice(String inputStringDice){
 		String[] stringArray = inputStringDice.split("-");
 		int dice1 = Integer.parseInt(stringArray[0]);

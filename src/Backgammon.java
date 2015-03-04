@@ -9,7 +9,7 @@ public class Backgammon {
 		
 		Game.initialize();	
 		Game.play();
-		
+	
 	}
 	
 }

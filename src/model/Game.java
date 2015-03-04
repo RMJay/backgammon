@@ -68,8 +68,9 @@ public class Game {
 		
 		whiteInputLocation = InputLocation.SERVER;
 		redInputLocation = InputLocation.SERVER;
-		whitePlayerType = PlayerType.AI;
-		redPlayerType = PlayerType.AI;
+		
+		whitePlayerType = Input.receivePlayerType(PlayerColour.WHITE);
+		redPlayerType = Input.receivePlayerType(PlayerColour.RED);
 	}
 	
 	public static void play() throws InputFormatException{
@@ -121,25 +122,33 @@ public class Game {
 		}
 	}
 	
-	private static int countWhitePieces(){ // including captured pieces
+	protected static int countAllPieces(){
 		int count = 0;
-		for (int spike = 1; spike <= 24; spike++){
-			if (gameState[spike] > 0){
-				count = count + Math.abs(gameState[spike]);
-			}
+		for (int spike = 0; spike <= 25; spike++){
+			count = count + Math.abs(gameState[spike]);
 		}
-		count = count + Math.abs(gameState[25]);
 		return count;
 	}
 	
-	private static int countRedPieces(){ // including captured pieces
+	protected static int countWhitePieces(){ // including captured pieces
 		int count = 0;
-		for (int spike = 1; spike <= 24; spike++){
+		for (int spike = 0; spike <= 25; spike++){
+			if (gameState[spike] > 0){
+				count = count + Math.abs(gameState[spike]);
+			}
+			
+		}
+		return count;
+	}
+	
+	protected static int countRedPieces(){ // including captured pieces
+		int count = 0;
+		for (int spike = 0; spike <= 25; spike++){
 			if (gameState[spike] < 0){
 				count = count + Math.abs(gameState[spike]);
 			}
+			
 		}
-		count = count + Math.abs(gameState[0]);
 		return count;
 	}
 

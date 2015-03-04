@@ -7,19 +7,21 @@ import Exceptions.NoAIMoveException;
 
 public class AI {
 	
-	public static int[] nextAIMove(int[] state){
+	public static int[] nextAIMove(int[] inputState){
+		int[] state = inputState.clone();
+		int[] returnState = inputState.clone();
 		List<int[]> moves;
 		try {
 			moves = rankedMoves(state).keySet().iterator().next();
 		} catch (NoAIMoveException e) {
 			System.out.println("No valid move, turn forfeight");
-			return state;
+			return inputState;
 		}
-		
+		//System.out.print(Move.stringDicePair());
 		for (int[] move : moves) {
-			state = Move.makeMove(move, state);
+			returnState = Move.makeMove(move, inputState);
 		}
-		return state;
+		return returnState;
 	} 
 	
 	public static Map<List<int[]>, Integer> rankedMoves(int[] state) throws NoAIMoveException{
@@ -304,6 +306,10 @@ public class AI {
 			if(Rules.bearOffMove(move, state)) score = score + 2;
 		}
 		return score;
+	}
+	
+	protected static String stringMove(int[] move){
+		return "("+ Integer.toString(move[0]) + "|" + Integer.toString(move[1]) + ")";
 	}
 }
 
