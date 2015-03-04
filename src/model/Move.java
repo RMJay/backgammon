@@ -15,6 +15,7 @@ public class Move {
 	private static int[] dicePair;
 	private static DiceType diceType;
 	private static Game.InputLocation inputLocation;
+	private static Game.PlayerType inputType;
 	
 	protected static int[] getDicePair(){
 		return dicePair;
@@ -24,8 +25,12 @@ public class Move {
 		return diceType;
 	}
 	
+	protected static Game.PlayerType getInputType(){
+		return inputType;
+	}
+	
 	protected static int[] nextMove(int[] state){
-		initializeMove();
+		//initializeMove();
 		switch(inputLocation){
 		case SERVER:
 			return nextServerMove(state);
@@ -36,7 +41,6 @@ public class Move {
 	}
 
 	protected static int[] nextServerMove(int[] state){
-		List<int[]> moves;
 		dicePair = diceRoll();
 		//dicePair = new int[] {2,4}; useful to fix dice for debugging
 		setDiceType();
@@ -44,9 +48,22 @@ public class Move {
 		System.out.print(Arrays.toString(dicePair)); //TODO remove
 		System.out.print(" ");
 		System.out.println(diceType);
+		switch(inputType){
+		case HUMAN: {
+			return nextHumanMove(state);
+		} 
+		case AI: {
+			return AI.nextAIMove(state);
+		}
+		default: return null;
+		}
+		
+	}
+	
+	protected static int[] nextHumanMove(int[] state){
 		do {
 			try {
-				moves = Input.receiveManual();
+				List<int[]> moves = Input.receiveManual();
 				return makeMoves(moves, state);	
 			} catch (InputFormatException e) {
 				System.err.println("Invalid input format, please try again");	
@@ -74,10 +91,14 @@ public class Move {
 	
  	protected static void initializeMove(){
 		switch(Game.getTurn()){
-		case WHITE:
-			inputLocation = Game.getWhiteInputLocation(); break;
-		case RED:
-			inputLocation = Game.getRedInputLocation(); break;
+		case WHITE:{
+			inputLocation = Game.getWhiteInputLocation();
+			inputType = Game.getWhitePlayerType();
+		} break;
+		case RED:{
+			inputLocation = Game.getRedInputLocation();
+			inputType = Game.getRedPlayerType();
+		} break;
 		}
 	}
 		

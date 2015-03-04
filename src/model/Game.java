@@ -36,20 +36,20 @@ public class Game {
 		return turn;
 	}
 
-	protected static InputLocation getRedInputLocation(){
-		return redInputLocation;
-	}
-	
 	protected static InputLocation getWhiteInputLocation(){
 		return whiteInputLocation;
 	}
 	
-	protected static PlayerType getRedPlayerType(){
-		return redPlayerType;
+	protected static InputLocation getRedInputLocation(){
+		return redInputLocation;
 	}
 	
 	protected static PlayerType getWhitePlayerType(){
 		return whitePlayerType;
+	}
+	
+	protected static PlayerType getRedPlayerType(){
+		return redPlayerType;
 	}
 	
 	public static void initialize(){
@@ -77,12 +77,13 @@ public class Game {
 		int turnNo = 1;
 		while(!gameOver)
 		{
+			Move.initializeMove();
 			System.out.println("Turn " + turnNo);
 			printState(gameState);
 			System.out.println();
 			Board.printBoard(gameState);
 			System.out.println();
-			System.out.println(turn + " make your move: ");
+			System.out.println(turn + " (" + Move.getInputType() + ") make your move: ");
 			
 			gameState = Move.nextMove(gameState);
 			System.out.println();
