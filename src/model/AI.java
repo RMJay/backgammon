@@ -17,10 +17,13 @@ public class AI {
 			System.out.println("No valid move, turn forfeight");
 			return inputState;
 		}
+		System.out.print(Move.stringDicePair());
 		//System.out.print(Move.stringDicePair());
 		for (int[] move : moves) {
+			System.out.print(stringMove(move));
 			returnState = Move.makeMove(move, inputState);
 		}
+		System.out.println();
 		return returnState;
 	} 
 	
