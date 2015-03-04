@@ -12,8 +12,8 @@ public class Move {
 		DOUBLES, SINGLES;
 	}
 	
-	private static int[] dicePair;
-	private static DiceType diceType;
+	private static int[] dicePair; // = new int[] {3,3}; //TODO leave un-initialised
+	private static DiceType diceType; //= DiceType.DOUBLES; //TODO leave un-initialised
 	private static Game.InputLocation inputLocation;
 	private static Game.PlayerType inputType;
 	

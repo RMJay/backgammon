@@ -1,48 +1,96 @@
-package model;
+package test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
+import model.Game;
+import model.Move;
+import model.Rules;
+import model.Game.PlayerColour;
 import Exceptions.InvalidMoveException;
-import Exceptions.NoAIMoveException;
 
-public class AI {
+public class AiTest {
 	
-	public static int[] nextAIMove(int[] state){
-		List<int[]> moves;
-		try {
-			moves = rankedMoves(state).keySet().iterator().next();
-		} catch (NoAIMoveException e) {
-			System.out.println("No valid move, turn forfeight");
-			return state;
-		}
+	private static int[] gameState;
+	private static int[] dice_Pair;
+	private static Game.PlayerColour turn;
+	
+	public static void main(String[] args){
+		initialize();
 		
-		for (int[] move : moves) {
-			state = Move.makeMove(move, state);
-		}
-		return state;
-	} 
-	
-	public static Map<List<int[]>, Integer> rankedMoves(int[] state) throws NoAIMoveException{
-		Map<List<int[]>,Integer> hashMap = new HashMap<List<int[]>,Integer>();
-		List<List<int[]>> allValidMoves = allValidMoves(state);
-		for(List<int[]> moves: allValidMoves){
-			int score = calculateScore(moves, state);
-			hashMap.put(moves,score);	
-		}
-		ValueComparator vc = new ValueComparator(hashMap);
-		Map<List<int[]>, Integer> valueSorted = new TreeMap<List<int[]>, Integer>(vc);
-		valueSorted.putAll(hashMap);
-		return valueSorted; 	
-	} 
-	
-	public static List<List<int[]>> allValidMoves(int[] state) throws NoAIMoveException{
-		switch (Move.getDiceType()){
-		case SINGLES: return allValidSinglesMoves(state); 
-		case DOUBLES: return allValidDoublesMoves(state); 
-		default: return null;
-		}
+		System.out.println("elementNo: [0,  1, 2, 3, 4, 5, 6, 7, 8, 9,10,11, 12,13,14,15,16, 17,18, 19,20,21,22,23,24,25]");
+		System.out.println("gameState: " + Arrays.toString(gameState));
+		System.out.println("turn: " + turn);
+		System.out.print("dicePair: " + Arrays.toString(Move.getDicePair()));
+		System.out.println(" " + Move.getDiceType());
+		System.out.print("spikes with white pieces: ");
+		System.out.println(spikesWithWhitePieces(gameState));
+		System.out.print("spikes with red pieces: ");
+		System.out.println(spikesWithRedPieces(gameState));
+
+		switch(Move.getDiceType()){
+		case SINGLES:{
+			System.out.println();
+			List<List<int[]>> allPossibleSingles = allPossibleSinglesMoves(gameState);
+			int noPossSingles = allPossibleSingles.size();
+			System.out.print("There are " + noPossSingles + " possible singles moves, ");
+			List<List<int[]>> allValidSingles = allValidSinglesMoves(gameState);
+			int noValidSingles = allValidSingles.size();
+			System.out.println("and " + noValidSingles + " valid singles moves");
+			/* for(List<int[]> moves: allValidSingles){
+				for(int[] move: moves){
+					System.out.print(Arrays.toString(move) + ",");
+				}
+				System.out.println();
+			} */
+		} break;
+		case DOUBLES:{
+			List<List<int[]>> allPossibleDoubles = allPossibleDoublesMoves(gameState);
+			int noPossDoubles = allPossibleDoubles.size();
+			System.out.print("There are " + noPossDoubles + " possible doubles moves");
+			/* for(List<int[]> moves: allPossibleDoubles){
+				for(int[] move: moves){
+					System.out.print(Arrays.toString(move) + ",");
+				}
+				System.out.println();
+			}	*/	
+			List<List<int[]>> allValidDoubles = allValidDoublesMoves(gameState);
+			int noValidDoubles = allValidDoubles.size();
+			System.out.println(" and " + noValidDoubles + " valid doubles moves");
+			/* for(List<int[]> moves: allValidDoubles){
+				for(int[] move: moves){
+					System.out.print(Arrays.toString(move) + ",");
+				}
+				System.out.println();
+			} */
+		} break;
+		}	
+
+		allPossibleDoublesMoves(gameState);
+		
 	}
 		
+	public static void initialize(){
+			
+			int[] initialState = new int[26];
+			initialState[1] = -2;
+			initialState[6] = 5;
+			initialState[8] = 3;
+			initialState[12] = -5;
+			initialState[13] = 5;
+			initialState[17] = -3;
+			initialState[19] = -5;
+			initialState[24] = 2;
+			
+			gameState = initialState;
+			turn = Game.PlayerColour.WHITE;
+	}
+
 	protected static List<Integer> spikesWithWhitePieces(int[] state){
 		List<Integer> spikes = new ArrayList<Integer>();
 		for (int spike = 0; spike < state.length; spike++){
@@ -168,7 +216,7 @@ public class AI {
 		return allMoves;
 	}
 
-	protected static List<List<int[]>> allValidSinglesMoves(int[] state) throws NoAIMoveException{
+	protected static List<List<int[]>> allValidSinglesMoves(int[] state){
 		List<List<int[]>> allValid = new ArrayList<List<int[]>>();
 		
 		List<List<int[]>> allPossible = allPossibleSinglesMoves(state);
@@ -179,9 +227,6 @@ public class AI {
 				continue;
 			}
 			allValid.add(moves);
-		}
-		if (allValid.size() == 0){
-			throw new NoAIMoveException();
 		}
 		return allValid;
 	}
@@ -214,6 +259,7 @@ public class AI {
 	
 	protected static List<List<int[]>> allPossibleDoublesMoves(int[] state){
 		List<List<int[]>> allMoves = new ArrayList<List<int[]>>();
+		int length = state.length;
 		
 		List<int[]> possibilities1 = null;
 		List<int[]> possibilities2 = null;
@@ -266,11 +312,14 @@ public class AI {
 							continue;
 						}
 						List<int[]> moves = new ArrayList<int[]>();
-						moves.add(move1); 
-						moves.add(move2); 
-						moves.add(move3); 
-						moves.add(move4); 
-						
+						moves.add(move1); //System.out.print(Arrays.toString(move1));
+						moves.add(move2); //System.out.print(Arrays.toString(move2));
+						moves.add(move3); //System.out.print(Arrays.toString(move3));
+						moves.add(move4); //System.out.println(Arrays.toString(move4));
+						//System.out.println(Arrays.toString(tempState1));
+						//System.out.println(Arrays.toString(tempState2));
+						//System.out.println(Arrays.toString(tempState3));
+						//System.out.println(Arrays.toString(tempState4));
 						allMoves.add(moves);
 					}
 				}
@@ -279,7 +328,7 @@ public class AI {
 		return allMoves;
 	}
 
-	protected static List<List<int[]>> allValidDoublesMoves(int[] state) throws NoAIMoveException{
+	protected static List<List<int[]>> allValidDoublesMoves(int[] state){
 		List<List<int[]>> allValid = new ArrayList<List<int[]>>();
 		List<List<int[]>> allPossible = allPossibleDoublesMoves(state);
 		
@@ -291,37 +340,7 @@ public class AI {
 			}
 			allValid.add(moves);
 		}
-		if (allValid.size() == 0){
-			throw new NoAIMoveException();
-		}
 		return allValid;
 	}
 
-	protected static int calculateScore(List<int[]> moves, int[] state){
-		int score = 0;
-		for (int[] move: moves){
-			if(Rules.captureMove(move, state)) score++;
-			if(Rules.bearOffMove(move, state)) score = score + 2;
-		}
-		return score;
-	}
 }
-
-class ValueComparator implements Comparator<List<int[]>> {
-	Map<List<int[]>, Integer> base; // base is the original HashMap (nGramData) that needs to be sorted
-
-	public ValueComparator(Map<List<int[]>, Integer> base) {
-		this.base = base; 
-	}
-
-	public int compare(List<int[]> a, List<int[]> b) {
-		if (base.get(a) > base.get(b)) { // the values (occurrence) from the base HashMap
-			return -1;
-		} else {
-			return 1;
-		}
-	}
-}
-
-
-	

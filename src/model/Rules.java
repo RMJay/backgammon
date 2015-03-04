@@ -14,6 +14,7 @@ public class Rules {
 	protected static void checkMoves(List<int[]> moves, int[] state) throws InvalidMoveException{
 		
 		//moves = removeForfeitTurn(moves);
+		checkMovesOutOfBounds(moves);
 		checkMovesCount(moves);
 		checkZeroMoves(moves);
 		checkWrongDirections(moves);
@@ -194,5 +195,33 @@ public class Rules {
 		}
 		}
 		
+	}
+
+	protected static void checkMovesOutOfBounds(List<int[]> moves) throws InvalidMoveException{
+		int moveNo = 1;
+		for (int[] move: moves){
+			if((move[0] < 0)||(move[0] > 25)||(move[1] < 0)||(move[1] > 25)){
+			throw new InvalidMoveException("Move" + moveNo + " out of bounds"); 
+			}
+			moveNo++;
+		}
+	}
+
+	protected static boolean captureMove(int[] move, int[] state){
+		boolean answer = false;
+		switch(Game.getTurn()){
+		case WHITE: if (state[move[1]] == -1) return true; //is there a red piece at the destination spike?
+		case RED: if (state[move[1]] == 1) return true; //is there a white piece at the destination spike?
+		}
+		return answer;
+	}
+	
+	protected static boolean bearOffMove(int[] move, int[] state){
+		boolean answer = false;
+		switch(Game.getTurn()){
+		case WHITE: if(move[1] == 0) return true; //is there a red piece at the destination spike?
+		case RED: if(move[1] == 25) return true; //is there a white piece at the destination spike?
+		}
+		return answer;
 	}
 }

@@ -19,8 +19,8 @@ public class Game {
 		HUMAN,AI
 	}
 	
-	private static int[] gameState = new int[26];
-	private static PlayerColour turn;
+	private static int[] gameState; // = new int[26];
+	private static PlayerColour turn; // = PlayerColour.WHITE; //TODO leave un-initialised
 	private static InputLocation whiteInputLocation;
 	private static InputLocation redInputLocation;
 	private static PlayerType whitePlayerType;
@@ -65,10 +65,11 @@ public class Game {
 		initialState[24] = 2;
 		
 		gameState = initialState;
+		
 		whiteInputLocation = InputLocation.SERVER;
 		redInputLocation = InputLocation.SERVER;
-		whitePlayerType = PlayerType.HUMAN;
-		redPlayerType = PlayerType.HUMAN;
+		whitePlayerType = PlayerType.AI;
+		redPlayerType = PlayerType.AI;
 	}
 	
 	public static void play() throws InputFormatException{
