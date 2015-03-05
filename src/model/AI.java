@@ -5,26 +5,28 @@ import java.util.*;
 import Exceptions.InvalidMoveException;
 import Exceptions.NoAIMoveException;
 
+class ScoreNumbers{
+	final static public int captureMove = 2;
+	final static public int bearOffMove = 1;
+}
+
 public class AI {
 	
-	public static int[] nextAIMove(int[] inputState){
-		int[] state = inputState.clone();
-		int[] returnState = inputState.clone();
+	public static int[] nextAIMove(int[] state){
 		List<int[]> moves;
 		try {
-			moves = rankedMoves(state).keySet().iterator().next();
+			moves = rankedMoves(state.clone()).keySet().iterator().next();
 		} catch (NoAIMoveException e) {
 			System.out.println("No valid move, turn forfeight");
-			return inputState;
+			return state;
 		}
 		System.out.print(Move.stringDicePair());
-		//System.out.print(Move.stringDicePair());
 		for (int[] move : moves) {
 			System.out.print(stringMove(move));
-			returnState = Move.makeMove(move, inputState);
+			state = Move.makeMove(move, state);
 		}
 		System.out.println();
-		return returnState;
+		return state;
 	} 
 	
 	public static Map<List<int[]>, Integer> rankedMoves(int[] state) throws NoAIMoveException{
@@ -132,7 +134,6 @@ public class AI {
 	}
 	
 	protected static List<List<int[]>> allPossibleSinglesMoves(int[] state){
-		int[] tempState;
 		Map<int[], Integer> hashMapA  = new HashMap<int[], Integer>();
 		
 		List<List<int[]>> allMoves = new ArrayList<List<int[]>>();
@@ -148,8 +149,9 @@ public class AI {
 			
 			int[] move1 = i.next().getKey();
 			int diceRemaining = hashMapA.get(move1);
+			int[] tempState;
 			try{
-			tempState = Move.makeMove(move1, state).clone();
+			tempState = Move.makeMove(move1, state.clone());
 			} catch (ArrayIndexOutOfBoundsException e){
 				continue;
 			}
@@ -160,7 +162,7 @@ public class AI {
 			}
 			for(int[] move2: secondMoves){
 				try{
-					Move.makeMove(move2, tempState);
+					Move.makeMove(move2, tempState.clone());
 				} catch (ArrayIndexOutOfBoundsException e){
 					continue;
 				}
@@ -224,49 +226,47 @@ public class AI {
 		List<int[]> possibilities2 = null;
 		List<int[]> possibilities3 = null;
 		List<int[]> possibilities4 = null;
-		
-		int[] tempState1 = state.clone();
-		int[] tempState2;
-		int[] tempState3;
-		int[] tempState4;
-		
+			
 		switch(Game.getTurn()){
-		case WHITE: possibilities1 = doublesMoveWhite(tempState1); break;
-		case RED:  possibilities1 = doublesMoveRed(tempState1); break;
+		case WHITE: possibilities1 = doublesMoveWhite(state.clone()); break;
+		case RED:  possibilities1 = doublesMoveRed(state.clone()); break;
 		}
 		for(int[] move1: possibilities1){
+			int[] tempState1;
 			try{
-				tempState2 = Move.makeMove(move1, tempState1).clone();
+				tempState1 = Move.makeMove(move1, state.clone());
 			} catch (ArrayIndexOutOfBoundsException e){
 				continue;
 			}
 			switch(Game.getTurn()){
-			case WHITE: possibilities2 = doublesMoveWhite(tempState2); break;
-			case RED:  possibilities2 = doublesMoveRed(tempState2); break;
+			case WHITE: possibilities2 = doublesMoveWhite(tempState1); break;
+			case RED:  possibilities2 = doublesMoveRed(tempState1); break;
 			}
 			for(int[] move2: possibilities2){
+				int[] tempState2;
 				try{
-					tempState3 = Move.makeMove(move2, tempState2).clone();
+					tempState2 = Move.makeMove(move2, tempState1.clone());
 				} catch (ArrayIndexOutOfBoundsException e){
 					continue;
 				}
 				switch(Game.getTurn()){
-				case WHITE: possibilities3 = doublesMoveWhite(tempState3); break;
-				case RED:  possibilities3 = doublesMoveRed(tempState3); break;
+				case WHITE: possibilities3 = doublesMoveWhite(tempState2); break;
+				case RED:  possibilities3 = doublesMoveRed(tempState2); break;
 				}
 				for(int[] move3: possibilities3){
+					int[] tempState3;
 					try{
-						tempState4 = Move.makeMove(move3, tempState3).clone();
+						tempState3 = Move.makeMove(move3, tempState2.clone());
 					} catch (ArrayIndexOutOfBoundsException e){
 						continue;
 					}
 					switch(Game.getTurn()){
-					case WHITE: possibilities4 = doublesMoveWhite(tempState4); break;
-					case RED:  possibilities4 = doublesMoveRed(tempState4); break;
+					case WHITE: possibilities4 = doublesMoveWhite(tempState3); break;
+					case RED:  possibilities4 = doublesMoveRed(tempState3); break;
 					}
 					for(int[] move4: possibilities4){
 						try{
-							Move.makeMove(move4, tempState4);
+							Move.makeMove(move4, tempState3.clone());
 						} catch (ArrayIndexOutOfBoundsException e){
 							continue;
 						}
@@ -305,8 +305,8 @@ public class AI {
 	protected static int calculateScore(List<int[]> moves, int[] state){
 		int score = 0;
 		for (int[] move: moves){
-			if(Rules.captureMove(move, state)) score++;
-			if(Rules.bearOffMove(move, state)) score = score + 2;
+			if(Rules.captureMove(move, state)) score = score + ScoreNumbers.captureMove;
+			if(Rules.bearOffMove(move, state)) score = score + ScoreNumbers.bearOffMove;
 		}
 		return score;
 	}
@@ -314,6 +314,7 @@ public class AI {
 	protected static String stringMove(int[] move){
 		return "("+ Integer.toString(move[0]) + "|" + Integer.toString(move[1]) + ")";
 	}
+
 }
 
 class ValueComparator implements Comparator<List<int[]>> {
